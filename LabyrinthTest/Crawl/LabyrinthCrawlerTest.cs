@@ -140,7 +140,19 @@ public class LabyrinthCrawlerTest
             +---+
             """
         );
+        CrawlingEventArgs? directionChanged = null;
+        test.OnDirectionChanged += (_, args) => directionChanged = args;
+
         test.TurnLeft();
+
+        using (var assertions = Assert.EnterMultipleScope())
+        {
+            Assert.That(directionChanged, Is.Not.Null);
+            Assert.That(directionChanged!.X, Is.EqualTo(2));
+            Assert.That(directionChanged.Y, Is.EqualTo(1));
+            Assert.That(directionChanged.Direction, Is.EqualTo(Direction.West));
+        }
+
         AssertThat(test,
             x: 2, y: 1,
             Direction.West,
@@ -157,9 +169,20 @@ public class LabyrinthCrawlerTest
             +--+
             """
         );
+        CrawlingEventArgs? positionChanged = null;
+        test.OnPositionChanged += (_, args) => positionChanged = args;
+
         var inventory = test.Walk();
 
-        Assert.That(inventory.HasItem, Is.False);
+        using (var assertions = Assert.EnterMultipleScope())
+        {
+            Assert.That(inventory.HasItem, Is.False);
+            Assert.That(positionChanged, Is.Not.Null);
+            Assert.That(positionChanged!.X, Is.EqualTo(1));
+            Assert.That(positionChanged.Y, Is.EqualTo(1));
+            Assert.That(positionChanged.Direction, Is.EqualTo(Direction.North));
+        }
+
         AssertThat(test,
             x: 1, y: 1,
             Direction.North,
@@ -176,11 +199,30 @@ public class LabyrinthCrawlerTest
             +--+
             """
         );
+        CrawlingEventArgs? directionChanged = null;
+        CrawlingEventArgs? positionChanged = null;
+        test.OnDirectionChanged += (_, args) => directionChanged = args;
+        test.OnPositionChanged += (_, args) => positionChanged = args;
+
         test.TurnRight();
 
         var inventory = test.Walk();
 
-        Assert.That(inventory.HasItem, Is.False);
+        using (var assertions = Assert.EnterMultipleScope())
+        {
+            Assert.That(directionChanged, Is.Not.Null);
+            Assert.That(directionChanged!.X, Is.EqualTo(1));
+            Assert.That(directionChanged.Y, Is.EqualTo(1));
+            Assert.That(directionChanged.Direction, Is.EqualTo(Direction.East));
+
+            Assert.That(positionChanged, Is.Not.Null);
+            Assert.That(positionChanged!.X, Is.EqualTo(2));
+            Assert.That(positionChanged.Y, Is.EqualTo(1));
+            Assert.That(positionChanged.Direction, Is.EqualTo(Direction.East));
+
+            Assert.That(inventory.HasItem, Is.False);
+        }
+
         AssertThat(test,
             x: 2, y: 1,
             Direction.East,

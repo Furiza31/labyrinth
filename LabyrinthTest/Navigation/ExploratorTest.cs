@@ -270,5 +270,53 @@ namespace LabyrinthTest.Navigation
             Assert.That(explorator.GetOut(10), Is.True);
             strategy.Received(1).NextAction(crawler);
         }
+
+        [Test]
+        public void StoredKeysUnlockMultipleDoors()
+        {
+            Door door1 = new Door();
+            Door door2 = new Door();
+            var keySlot1 = new MyInventory();
+            var keySlot2 = new MyInventory();
+            door1.LockAndTakeKey(keySlot1);
+            door2.LockAndTakeKey(keySlot2);
+
+            var facingSequence = new Queue<Tile>(
+            [
+                Wall.Singleton,
+                Wall.Singleton,
+                Wall.Singleton,
+                Wall.Singleton,
+                Wall.Singleton,
+                door1,
+                door1,
+                door2,
+                door2,
+                Outside.Singleton
+            ]);
+
+            var walkResults = new Queue<Inventory>(
+            [
+                keySlot1,
+                keySlot2,
+                new MyInventory(),
+                new MyInventory()
+            ]);
+
+            ICrawler crawler = Substitute.For<ICrawler>();
+            crawler.Direction.Returns(Direction.North);
+            crawler.FacingTile.Returns(_ => facingSequence.Dequeue());
+            crawler.Walk().Returns(_ => walkResults.Dequeue());
+
+            IMovementStrategy strategy = StrategyReturning([MoveAction.Walk, MoveAction.Walk, MoveAction.Walk, MoveAction.Walk]);
+
+            IExplorator explorator = new Explorator(crawler, strategy);
+
+            Assert.That(explorator.GetOut(5), Is.True);
+            Assert.That(door1.IsOpened, Is.True);
+            Assert.That(door2.IsOpened, Is.True);
+            Assert.That(keySlot1.HasItem, Is.False);
+            Assert.That(keySlot2.HasItem, Is.False);
+        }
     }
 }

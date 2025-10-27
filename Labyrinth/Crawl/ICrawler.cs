@@ -43,5 +43,15 @@ namespace Labyrinth.Crawl
         /// Turns the crawler 90 degrees to the right (clockwise).
         /// </summary>
         void TurnRight();
+
+        /// <summary>
+        /// Raised whenever the crawler position changes.
+        /// </summary>
+        event EventHandler<CrawlingEventArgs>? OnPositionChanged;
+
+        /// <summary>
+        /// Raised whenever the crawler direction changes.
+        /// </summary>
+        event EventHandler<CrawlingEventArgs>? OnDirectionChanged;
     }
 }
