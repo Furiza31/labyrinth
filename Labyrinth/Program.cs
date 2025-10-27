@@ -18,6 +18,7 @@ var crawler = labyrinth.NewCrawler();
 var explorator = new Explorator(crawler, new RandomMovementStrategy(new SystemRandom()));
 
 const int refreshDelayMs = 50;
+const int maxTries = 100000;
 
 var rows = labyrinth
     .ToString()
@@ -70,7 +71,7 @@ try
 
     crawler.OnDirectionChanged += (_, args) => DrawExplorer(args);
 
-    explorator.GetOut(100000);
+    explorator.GetOut(maxTries);
 
     Console.SetCursorPosition(0, rows.Length + 1);
     Console.WriteLine("Exploration terminée.");
