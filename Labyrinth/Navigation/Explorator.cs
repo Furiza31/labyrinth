@@ -35,8 +35,8 @@ public class Explorator(ICrawler crawler, IMovementStrategy strategy) : IExplora
                         }
                         _inventory = _crawler.Walk();
                         break;
-                    case MoveAction.TurnLeft: _crawler.Direction.TurnLeft(); break;
-                    case MoveAction.TurnRight: _crawler.Direction.TurnRight(); break;
+                    case MoveAction.TurnLeft: _crawler.TurnLeft(); break;
+                    case MoveAction.TurnRight: _crawler.TurnRight(); break;
                     default: throw new NotSupportedException("Action inconnue");
                 }
             }

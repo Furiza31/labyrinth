@@ -86,7 +86,7 @@ public class LabyrinthCrawlerTest
             +-+
             """
         );
-        test.Direction.TurnLeft();
+        test.TurnLeft();
         AssertThat(test,
             x: 0, y: 1,
             Direction.West,
@@ -103,7 +103,7 @@ public class LabyrinthCrawlerTest
             +-+
             """
         );
-        test.Direction.TurnRight();
+        test.TurnRight();
         AssertThat(test,
             x: 2, y: 1,
             Direction.East,
@@ -120,8 +120,8 @@ public class LabyrinthCrawlerTest
             +x+
             """
         );
-        test.Direction.TurnLeft();
-        test.Direction.TurnLeft();
+        test.TurnLeft();
+        test.TurnLeft();
         AssertThat(test,
             x: 1, y: 2,
             Direction.South,
@@ -140,7 +140,7 @@ public class LabyrinthCrawlerTest
             +---+
             """
         );
-        test.Direction.TurnLeft();
+        test.TurnLeft();
         AssertThat(test,
             x: 2, y: 1,
             Direction.West,
@@ -176,7 +176,7 @@ public class LabyrinthCrawlerTest
             +--+
             """
         );
-        test.Direction.TurnRight();
+        test.TurnRight();
 
         var inventory = test.Walk();
 
@@ -272,11 +272,11 @@ public class LabyrinthCrawlerTest
                 """);
         var test = laby.NewCrawler();
 
-        test.Direction.TurnRight();
+        test.TurnRight();
 
         var inventory = test.Walk();
 
-        test.Direction.TurnRight();
+        test.TurnRight();
         ((Door)test.FacingTile).Open(inventory);
 
         test.Walk();
