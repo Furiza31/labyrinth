@@ -1,4 +1,5 @@
-﻿using Labyrinth.Crawl;
+﻿using System.Linq;
+using Labyrinth.Crawl;
 using Labyrinth.Items;
 using Labyrinth.Tiles;
 
@@ -159,7 +160,7 @@ public class LabyrinthCrawlerTest
         );
         var inventory = test.Walk();
 
-        Assert.That(inventory.HasItem, Is.False);
+        Assert.That(inventory.HasItems, Is.False);
         AssertThat(test,
             x: 1, y: 1,
             Direction.North,
@@ -180,7 +181,7 @@ public class LabyrinthCrawlerTest
 
         var inventory = test.Walk();
 
-        Assert.That(inventory.HasItem, Is.False);
+        Assert.That(inventory.HasItems, Is.False);
         AssertThat(test,
             x: 2, y: 1,
             Direction.East,
@@ -239,8 +240,8 @@ public class LabyrinthCrawlerTest
 
         using var all = Assert.EnterMultipleScope();
 
-        Assert.That(inventory.HasItem, Is.True);
-        Assert.That(inventory.ItemType, Is.EqualTo(typeof(Key)));
+        Assert.That(inventory.HasItems, Is.True);
+        Assert.That(inventory.ItemTypes.First(), Is.EqualTo(typeof(Key)));
     }
 
     [Test]
@@ -259,7 +260,7 @@ public class LabyrinthCrawlerTest
         Assert.That(door.Open(inventory), Is.False);
         Assert.That(door.IsLocked, Is.True);
         Assert.That(door.IsTraversable, Is.False);
-        Assert.That(inventory.HasItem, Is.True);
+        Assert.That(inventory.HasItems, Is.True);
     }
 
     [Test]
