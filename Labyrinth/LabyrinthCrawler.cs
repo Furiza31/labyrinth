@@ -9,25 +9,20 @@ namespace Labyrinth
         private class LabyrinthCrawler(int x, int y, Tile[,] tiles) : ICrawler
         {
             public int X => _x;
-            public int Y => _y;
-            public Tile FacingTile => ProcessFacingTile((x, y, tile) => tile);
-            private int _x = x;
-            private int _y = y;
-            private readonly Direction _direction = Direction.North;
-            private readonly Tile[,] _tiles = tiles;
-            Direction ICrawler.Direction => _direction;
-            public event EventHandler<CrawlingEventArgs>? OnPositionChanged;
-            public event EventHandler<CrawlingEventArgs>? OnDirectionChanged;
 
-            public Inventory Walk() =>
-                ProcessFacingTile((facingX, facingY, tile) =>
+            public int Y => _y;
+
+            public Tile FacingTile => ProcessFacingTile((x, y, tile) => tile);
+
+            Direction ICrawler.Direction => _direction;
+
+            public Inventory Walk() => 
+                ProcessFacingTile((facingX, facingY, tile) => 
                 {
                     var inventory = tile.Pass();
 
                     _x = facingX;
                     _y = facingY;
-
-                    OnPositionChanged?.Invoke(this, new CrawlingEventArgs(_x, _y, _direction));
                     return inventory;
                 });
 
@@ -48,17 +43,11 @@ namespace Labyrinth
                  );
             }
 
-            public void TurnLeft()
-            {
-                _direction.TurnLeft();
-                OnDirectionChanged?.Invoke(this, new CrawlingEventArgs(_x, _y, _direction));
-            }
+            private int _x = x;
+            private int _y = y;
 
-            public void TurnRight()
-            {
-                _direction.TurnRight();
-                OnDirectionChanged?.Invoke(this, new CrawlingEventArgs(_x, _y, _direction));
-            }
+            private readonly Direction _direction = Direction.North;
+            private readonly Tile[,] _tiles = tiles;
         }
     }
 }

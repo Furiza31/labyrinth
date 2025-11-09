@@ -1,19 +1,13 @@
-namespace Labyrinth.Crawl;
-
-public class CrawlingEventArgs(int x, int y, Direction direction) : EventArgs
+﻿namespace Labyrinth.Crawl
 {
-    /// <summary>
-    /// Crawler current position X coordinate.
-    /// </summary>
-    public int X { get; init; } = x;
-
-    /// <summary>
-    /// Crawler current position Y coordinate.
-    /// </summary>
-    public int Y { get; init; } = y;
-
-    /// <summary>
-    /// Crawler current facing direction.
-    /// </summary>
-    public Direction Direction { get; init; } = direction;
+    public class CrawlingEventArgs(int x, int y, Direction dir) : EventArgs
+    {
+        public CrawlingEventArgs(ICrawler crawler) 
+            : this(crawler.X, crawler.Y, crawler.Direction)
+        {
+        }
+        public int X { get; } = x;
+        public int Y { get; } = y;
+        public Direction Direction { get; } = dir;
+    }
 }

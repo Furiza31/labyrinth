@@ -33,25 +33,5 @@ namespace Labyrinth.Crawl
         /// </summary>
         /// <returns>An inventory of the collectable items in the place reached.</returns>
         Inventory Walk();
-
-        /// <summary>
-        /// Turns the crawler 90 degrees to the left (counter-clockwise).
-        /// </summary>
-        void TurnLeft();
-
-        /// <summary>
-        /// Turns the crawler 90 degrees to the right (clockwise).
-        /// </summary>
-        void TurnRight();
-
-        /// <summary>
-        /// Raised whenever the crawler position changes.
-        /// </summary>
-        event EventHandler<CrawlingEventArgs>? OnPositionChanged;
-
-        /// <summary>
-        /// Raised whenever the crawler direction changes.
-        /// </summary>
-        event EventHandler<CrawlingEventArgs>? OnDirectionChanged;
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Labyrinth.Crawl;
 using Labyrinth.Tiles;
-using Labyrinth.Build;
 using System.Text;
 
 namespace Labyrinth
@@ -15,9 +14,9 @@ namespace Labyrinth
         /// <exception cref="NotSupportedException">Thrown for multiple doors (resp. key locations) before key locations (resp. doors).</exception>
         public Labyrinth(string ascii_map)
         {
-            AsciiParser parser = new AsciiParser();
-            parser.OnStartPositionFound += (sender, args) => _start = (args.X, args.Y);
+            Build.AsciiParser parser = new();
 
+            parser.StartPositionFound+= (s, e) => _start = (e.X, e.Y);
             _tiles = parser.Parse(ascii_map);
             if (_tiles.GetLength(0) < 3 || _tiles.GetLength(1) < 3)
             {

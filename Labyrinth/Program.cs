@@ -1,7 +1,19 @@
+﻿using Labyrinth;
 using Labyrinth.Crawl;
-using Labyrinth.Navigation;
+using Labyrinth.Sys;
 
-const string asciiMap = """
+char DirToChar(Direction dir) =>
+    "^<v>"[dir.DeltaX * dir.DeltaX + dir.DeltaX + dir.DeltaY + 1];
+
+void DrawExplorer(object? sender, CrawlingEventArgs e)
+{
+    Console.SetCursorPosition(e.X, e.Y);
+    Console.Write(DirToChar(e.Direction));
+    Console.SetCursorPosition(0, 0);
+    Thread.Sleep(500);
+}
+
+var labyrinth = new Labyrinth.Labyrinth("""
     +--+--------+
     |  /        |
     |  +--+--+  |
@@ -11,72 +23,24 @@ const string asciiMap = """
     +  +-------/|
     |           |
     +-----------+
-    """;
-
-var labyrinth = new Labyrinth.Labyrinth(asciiMap);
+    """);
 var crawler = labyrinth.NewCrawler();
-var explorator = new Explorator(crawler, new RandomMovementStrategy(new SystemRandom()));
+var prevX = crawler.X;
+var prevY = crawler.Y;
+var explorer = new RandExplorer(
+    crawler, 
+    new BasicEnumRandomizer<RandExplorer.Actions>()
+);
 
-const int refreshDelayMs = 50;
-const int maxTries = 100000;
-
-var rows = labyrinth
-    .ToString()
-    .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
-
-var currentPosition = (X: crawler.X, Y: crawler.Y);
-
-Console.CursorVisible = false;
-
-try
+explorer.DirectionChanged += DrawExplorer;
+explorer.PositionChanged  += (s, e) =>
 {
-    Console.Clear();
+    Console.SetCursorPosition(prevX, prevY);
+    Console.Write(' ');
+    DrawExplorer(s, e);
+    (prevX, prevY) = (e.X, e.Y);
+};
 
-    foreach (var row in rows)
-    {
-        Console.WriteLine(row);
-    }
-
-    static char DirectionToChar(Direction direction) =>
-        direction == Direction.North ? '^' :
-        direction == Direction.East ? '>' :
-        direction == Direction.South ? 'v' : '<';
-
-    void RestoreTile(int x, int y)
-    {
-        if (y < 0 || y >= rows.Length) return;
-        var tileRow = rows[y];
-        if (x < 0 || x >= tileRow.Length) return;
-
-        Console.SetCursorPosition(x, y);
-        Console.Write(tileRow[x]);
-    }
-
-    void DrawExplorer(CrawlingEventArgs args)
-    {
-        Console.SetCursorPosition(args.X, args.Y);
-        Console.Write(DirectionToChar(args.Direction));
-
-        currentPosition = (args.X, args.Y);
-        Thread.Sleep(refreshDelayMs);
-    }
-
-    DrawExplorer(new CrawlingEventArgs(crawler.X, crawler.Y, crawler.Direction));
-
-    crawler.OnPositionChanged += (_, args) =>
-    {
-        RestoreTile(currentPosition.X, currentPosition.Y);
-        DrawExplorer(args);
-    };
-
-    crawler.OnDirectionChanged += (_, args) => DrawExplorer(args);
-
-    explorator.GetOut(maxTries);
-
-    Console.SetCursorPosition(0, rows.Length + 1);
-    Console.WriteLine("Exploration terminée.");
-}
-finally
-{
-    Console.CursorVisible = true;
-}
+Console.Clear();
+Console.WriteLine(labyrinth);
+explorer.GetOut(1000);

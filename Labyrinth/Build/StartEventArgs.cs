@@ -1,17 +1,13 @@
-namespace Labyrinth.Build;
-
-/// <summary>
-/// Event arguments for labyrinth start event.
-/// </summary>
-public class StartEventArgs(int x, int y) : EventArgs
+namespace Labyrinth.Build
 {
-    /// <summary>
-    /// Crawler starting position X coordinate.
-    /// </summary>
-    public int X { get; init; } = x;
-
-    /// <summary>
-    /// Crawler starting position Y coordinate.
-    /// </summary>
-    public int Y { get; init; } = y;
+	/// <summary>
+	/// Provides data for an event that is triggered when a start position is found.
+	/// </summary>
+	/// <param name="x">X coordinate of the starting position</param>
+	/// <param name="y">Y coordinate of the starting position</param>
+	public class StartEventArgs(int x, int y) : EventArgs
+	{
+		public int X { get; } = x;
+		public int Y { get; } = y;
+    }
 }
