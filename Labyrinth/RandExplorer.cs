@@ -28,7 +28,7 @@ namespace Labyrinth
                 if (_crawler.FacingTile.IsTraversable
                     && _randomGenerator.Next() == Actions.Walk)
                 {
-                    _crawler.Walk().SwapItems(bag);
+                    CollectItems(_crawler.Walk(), bag);
                     changeEvent = PositionChanged;
                 }
                 else
@@ -36,11 +36,12 @@ namespace Labyrinth
                     _crawler.Direction.TurnLeft();
                     changeEvent = DirectionChanged;
                 }
-                if (_crawler.FacingTile is Door door && door.IsLocked
-                    && bag.HasItems && bag.ItemTypes.First() == typeof(Key))
+
+                if (_crawler.FacingTile is Door door)
                 {
-                    door.Open(bag);
+                    TryUnlockDoor(bag, door);
                 }
+
                 changeEvent?.Invoke(this, new CrawlingEventArgs(_crawler));
             }
             return n;
@@ -49,6 +50,55 @@ namespace Labyrinth
         public event EventHandler<CrawlingEventArgs>? PositionChanged;
 
         public event EventHandler<CrawlingEventArgs>? DirectionChanged;
+
+        private static void CollectItems(Inventory source, MyInventory bag)
+        {
+            while (source.HasItems)
+            {
+                bag.MoveItemFrom(source);
+            }
+        }
+
+        private static void TryUnlockDoor(MyInventory bag, Door door)
+        {
+            if (!door.IsLocked)
+            {
+                return;
+            }
+
+            var keyBuffer = new MyInventory();
+            while (door.IsLocked)
+            {
+                var keyIndex = IndexOfKey(bag);
+                if (keyIndex < 0)
+                {
+                    break;
+                }
+
+                keyBuffer.MoveItemFrom(bag, keyIndex);
+                if (!door.Open(keyBuffer))
+                {
+                    bag.MoveItemFrom(keyBuffer);
+                }
+            }
+        }
+
+        private static int IndexOfKey(MyInventory bag)
+        {
+            var index = 0;
+
+            foreach (var item in bag.Items)
+            {
+                if (item is Key)
+                {
+                    return index;
+                }
+
+                index++;
+            }
+
+            return -1;
+        }
     }
 
 }

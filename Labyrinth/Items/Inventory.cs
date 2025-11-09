@@ -47,17 +47,6 @@
             _items.Add(item);
         }
 
-        /// <summary>
-        /// Swaps items between inventories (if any)
-        /// </summary>
-        /// <param name="from">The inventory to swap item from</param>
-        public void SwapItems(Inventory from)
-        {
-            ArgumentNullException.ThrowIfNull(from);
-
-            (_items, from._items) = (from._items, _items);
-        }
-
         private List<ICollectable> _items = item is null
             ? []
             : [item];
